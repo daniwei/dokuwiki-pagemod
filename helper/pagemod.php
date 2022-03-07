@@ -8,6 +8,10 @@ class helper_plugin_pagemod_pagemod extends helper_plugin_bureaucracy_action {
 
     var $patterns;
     var $values;
+    var $replace_start_tag;
+    var $replace_closing_tag;
+    var $replace_prefix = 'render_';
+
     protected $template_section_id;
 
     /**
@@ -37,10 +41,15 @@ class helper_plugin_pagemod_pagemod extends helper_plugin_bureaucracy_action {
             $page_to_modify = $ID;
         } else {
             //resolve against page which contains the form
+            $page_to_modify = $this->replace($page_to_modify);
+            
             resolve_pageid(getNS($ID), $page_to_modify, $ignored);
         }
 
-        $template_section_id = cleanID(array_shift($argv));
+        // supporting field input for the section id
+        $template_section_id = array_shift($argv);
+        $template_section_id = $this->replace($template_section_id);
+        $template_section_id = cleanID($template_section_id);
 
         if(!page_exists($page_to_modify)) {
             msg(sprintf($this->getLang('e_pagenotexists'), html_wikilink($page_to_modify)), -1);
@@ -131,6 +140,14 @@ class helper_plugin_pagemod_pagemod extends helper_plugin_bureaucracy_action {
      */
     protected function updatePage($template, $template_section_id) {
         $this->template_section_id = $template_section_id;
+
+        $replace_prefix = $this->replace_prefix;
+        $this->replace_start_tag = "<pagemod ".$replace_prefix."start_$template_section_id></pagemod>";
+        $this->replace_closing_tag = "<pagemod ".$replace_prefix."end_$template_section_id></pagemod>";
+
+        //remove previous rendering (=replace mode) for this section-ID
+        $template = preg_replace('#'.preg_quote($this->replace_start_tag).'((?!\<pagemod ).)+'.preg_quote($this->replace_closing_tag).'#is', '',$template);
+
         return preg_replace_callback('/<pagemod (\w+)(?: (.+?))?>(.*?)<\/pagemod>/s', array($this, 'parsePagemod'), $template);
     }
 
@@ -147,13 +164,16 @@ class helper_plugin_pagemod_pagemod extends helper_plugin_bureaucracy_action {
         $params_string = $matches[2];
         $contents      = $matches[3];
 
+        //rendered tags produced by the 'output_replace' mode can be skipped
+        if(preg_match('/^'.preg_quote($this->replace_prefix).'/',$id) == 1) return $full_text;
+
         // First parse the parameters
-        $output_before = true;
+        $pagemod_method = '';
         if($params_string) {
             $params = array_map('trim', explode(",", $params_string));
             foreach($params as $param) {
-                if($param === 'output_after') {
-                    $output_before = false;
+                if(preg_match('/output_(after|before|replace)/s', $param) == 1) {
+                    $pagemod_method = $param;
                 }
             }
         }
@@ -165,11 +185,18 @@ class helper_plugin_pagemod_pagemod extends helper_plugin_bureaucracy_action {
             //replace bureacracy variables
             $output = $this->replace($output);
 
-            if($output_before) {
-                return $output . $full_text;
-            } else {
-                return $full_text . $output;
+            switch($pagemod_method){
+                case 'output_replace':
+                    //return $full_text . "\n" .$this->replace_start_tag . $output . $this->replace_closing_tag;
+                    return $full_text . $this->replace_start_tag . $output . $this->replace_closing_tag;
+                case 'output_before':
+                    return $output . $full_text;
+                case 'output_after':
+                    return $full_text . $output;
+                default:
+                    return $full_text;
             }
+
         } else {
             return $full_text;
         }
