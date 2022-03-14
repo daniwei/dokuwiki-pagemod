@@ -55,18 +55,23 @@ class helper_plugin_pagemod_pagemod extends helper_plugin_bureaucracy_action {
             msg(sprintf($this->getLang('e_pagenotexists'), html_wikilink($page_to_modify)), -1);
             return false;
         }
-
-        // check auth
-        //
-        // This is an important point.  In order to be able to modify a page via this method ALL you need is READ access to the page
-        // This is good for admins to be able to only allow people to modify a page via a certain method.  If you want to protect the page
-        // from people to WRITE via this method, deny access to the form page.
-        $auth = $this->aclcheck($page_to_modify); // runas
-        if($auth < AUTH_READ) {
-            msg($this->getLang('e_denied'), -1);
-            return false;
-        }
-
+        
+        // If ignore_acl is 1, this will bypass all user access rights.
+        // Every user can then manipulate the target page without the need of read/write access to it.
+	    if($this->getConf('ignore_acl')==0)
+	    {
+            // check auth
+            //
+            // This is an important point.  In order to be able to modify a page via this method ALL you need is READ access to the page
+            // This is good for admins to be able to only allow people to modify a page via a certain method.  If you want to protect the page
+            // from people to WRITE via this method, deny access to the form page.
+            $auth = $this->aclcheck($page_to_modify); // runas
+            if($auth < AUTH_READ) {
+                msg($this->getLang('e_denied'), -1);
+                return false;
+            }
+	    }
+	
         // fetch template
         $template = rawWiki($page_to_modify);
         if(empty($template)) {
@@ -85,7 +90,7 @@ class helper_plugin_pagemod_pagemod extends helper_plugin_bureaucracy_action {
 
         //thanks message with redirect
         $link = wl($page_to_modify);
-        return sprintf(
+            return sprintf(
             $this->getLang('pleasewait'),
             "<script type='text/javascript' charset='utf-8'>location.replace('$link')</script>", // javascript redirect
             html_wikilink($page_to_modify) //fallback url
