@@ -1,7 +1,9 @@
-Dokuwiki Pagemod Plugin
+Dokuwiki Pagemod2 Plugin
 ================
 
 Pagemod Plugin for DokuWiki
+
+This plugin is forked from https://github.com/BaselineIT/dokuwiki-pagemod. The original plugin is apparently not developed further. This plugin is also not developed professionally, but is occasionally adapted and expanded to suit own needs.
 
 All documentation for this plugin can be found at
 https://www.dokuwiki.org/plugin:pagemod
