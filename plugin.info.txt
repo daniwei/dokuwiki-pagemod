@@ -1,7 +1,7 @@
 base    pagemod2
-author  Baseline IT, Daniel Weisshaar
-email   info@baseline-remove-this-it.co.za
+author  Daniel Weisshaar, Baseline IT
+email   Daniel Weisshaar
 date    2022-03-14
-name    Inline Page Modifier
+name    Pagemod 2 for Bureaucracy
 desc    Allows you create structured ways pages can be modified
 url     https://www.dokuwiki.org/plugin:pagemod2

@@ -4,9 +4,9 @@
 if(!defined('DOKU_INC')) die();
 
 /**
- * Class syntax_plugin_pagemod
+ * Class syntax_plugin_pagemod2
  */
-class syntax_plugin_pagemod extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_pagemod2 extends DokuWiki_Syntax_Plugin {
 
     /**
      * Syntax Type
@@ -30,7 +30,7 @@ class syntax_plugin_pagemod extends DokuWiki_Syntax_Plugin {
      * @param string $mode
      */
     public function connectTo($mode) {
-        $this->Lexer->addSpecialPattern("<pagemod \w+(?: .+?)?>.*?</pagemod>", $mode, 'plugin_pagemod');
+        $this->Lexer->addSpecialPattern("<pagemod2 \w+(?: .+?)?>.*?</pagemod2>", $mode, 'plugin_pagemod2');
     }
 
     // We just want to hide this from view

@@ -3,8 +3,9 @@
  * Simple page modifying action for the bureaucracy plugin
  *
  * @author Darren Hemphill <darren@baseline-remove-this-it.co.za>
+ * @author Daniel Weisshaar <daniwei-dev@gmx.de>
  */
-class helper_plugin_pagemod_pagemod extends helper_plugin_bureaucracy_action {
+class helper_plugin_pagemod2_pagemod2 extends helper_plugin_bureaucracy_action {
 
     var $patterns;
     var $values;
@@ -147,17 +148,17 @@ class helper_plugin_pagemod_pagemod extends helper_plugin_bureaucracy_action {
         $this->template_section_id = $template_section_id;
 
         $replace_prefix = $this->replace_prefix;
-        $this->replace_start_tag = "<pagemod ".$replace_prefix."start_$template_section_id></pagemod>";
-        $this->replace_closing_tag = "<pagemod ".$replace_prefix."end_$template_section_id></pagemod>";
+        $this->replace_start_tag = "<pagemod2 ".$replace_prefix."start_$template_section_id></pagemod2>";
+        $this->replace_closing_tag = "<pagemod2 ".$replace_prefix."end_$template_section_id></pagemod2>";
 
         //remove previous rendering (=replace mode) for this section-ID
-        $template = preg_replace('#'.preg_quote($this->replace_start_tag).'((?!\<pagemod ).)+'.preg_quote($this->replace_closing_tag).'#is', '',$template);
+        $template = preg_replace('#'.preg_quote($this->replace_start_tag).'((?!\<pagemod2 ).)+'.preg_quote($this->replace_closing_tag).'#is', '',$template);
 
-        return preg_replace_callback('/<pagemod (\w+)(?: (.+?))?>(.*?)<\/pagemod>/s', array($this, 'parsePagemod'), $template);
+        return preg_replace_callback('/<pagemod2 (\w+)(?: (.+?))?>(.*?)<\/pagemod2>/s', array($this, 'parsePagemod'), $template);
     }
 
     /**
-     * (callback) Build replacement that is inserted before of after <pagemod> section
+     * (callback) Build replacement that is inserted before of after <pagemod2> section
      *
      * @param $matches
      * @return string
