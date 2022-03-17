@@ -92,8 +92,7 @@ class helper_plugin_pagemod2_pagemod2 extends helper_plugin_bureaucracy_action {
         // if a thanks message exist, show it
         if(!empty($thanks))
         {
-            msg($this->getLang('success'), 1);
-            return "<p>" . $thanks . "</p>";
+            return '<div class="success">' . $thanks . '</div>';
         }
         
         // no thanks message, do a redirect to the first pagemod2 target page of the form
@@ -200,7 +199,6 @@ class helper_plugin_pagemod2_pagemod2 extends helper_plugin_bureaucracy_action {
 
             switch($pagemod_method){
                 case 'output_replace':
-                    //return $full_text . "\n" .$this->replace_start_tag . $output . $this->replace_closing_tag;
                     return $full_text . $this->replace_start_tag . $output . $this->replace_closing_tag;
                 case 'output_before':
                     return $output . $full_text;
