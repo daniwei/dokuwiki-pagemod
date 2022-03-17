@@ -29,6 +29,7 @@ class helper_plugin_pagemod2_pagemod2 extends helper_plugin_bureaucracy_action {
         global $ID;
 
         // prepare replacements
+        $this->removeTrailingCommaFromFieldUsers($fields);
         $this->prepareNamespacetemplateReplacements();
         $this->prepareDateTimereplacements();
         $this->prepareLanguagePlaceholder();
@@ -210,6 +211,33 @@ class helper_plugin_pagemod2_pagemod2 extends helper_plugin_bureaucracy_action {
 
         } else {
             return $full_text;
+        }
+    }
+    
+    /**
+     * Remove the trailing comma in the users list
+     *
+     * @param [inout] $fields
+     */
+    private function removeTrailingCommaFromFieldUsers(&$fields)
+    {
+        foreach($fields as $fieldKey => $fieldValue)
+        {
+            // find the users field
+            if('helper_plugin_bureaucracy_fieldusers' == get_class($fieldValue))
+            {
+                $fieldUsers = $fieldValue->opt['value'];
+                if(substr($fieldUsers, -1) == ',')
+                {
+                    // last char is a comma, remove it
+                    $fieldValue->opt['value'] = substr($fieldUsers, 0, -1);
+                }
+                elseif(substr($fieldUsers, -2) == ', ')
+                {
+                    // penultimate char is a comma followed by a space, remove both
+                    $fieldValue->opt['value'] = substr($fieldUsers, 0, -2);
+                }
+            }
         }
     }
 
