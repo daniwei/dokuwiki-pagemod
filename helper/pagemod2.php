@@ -198,6 +198,19 @@ class helper_plugin_pagemod2_pagemod2 extends helper_plugin_bureaucracy_action {
             //replace bureacracy variables
             $output = $this->replace($output);
 
+            // remove newlines to support multiline text in textareas
+            $endsWithNewline = false;
+            if($this->checkIfEndsWith($output,"\n") || $this->checkIfEndsWith($output, "\r\n")) {
+                $endsWithNewline = true;
+            }
+            $output = str_replace("\n", " ", $output);
+            $output = str_replace("\r", " ", $output);
+
+            // in case of output before/after you need the newline at the end for the table structure
+            if($pagemod_method != 'output_replace' && $endsWithNewline) {    
+                    $output = $output . "\n";
+            }
+
             switch($pagemod_method){
                 case 'output_replace':
                     return $full_text . $this->replace_start_tag . $output . $this->replace_closing_tag;
@@ -214,6 +227,18 @@ class helper_plugin_pagemod2_pagemod2 extends helper_plugin_bureaucracy_action {
         }
     }
     
+    /**
+     * Check if string ends with a defined needle
+     *
+     * @param [in] $haystack String to search in
+     * @param [in] $needle Substring with the end to search for
+     * @return boolean true if it ends with the needle, otherwise false
+     */
+    private function checkIfEndsWith($haystack, $needle)
+    {
+        return $needle !== '' ? substr($haystack, -strlen($needle)) === $needle : true;
+    }
+
     /**
      * Remove the trailing comma in the users list
      *
